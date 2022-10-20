@@ -52,6 +52,12 @@ namespace SshNet
                 shellStream.WriteLine(password);
 
                 string line;
+                
+                if ((line = shellStream.ReadLine()) == "sh: 0: Can't open run.sh")
+                {
+                    throw new Exception("Can't open run.sh");
+                }
+
                 while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
                 {
                     Console.WriteLine(line);
@@ -72,6 +78,11 @@ namespace SshNet
                             Thread.Sleep(1000);
                             output = shellStream.Expect(new Regex(@"([$#>:])"));
                             shellStream.WriteLine(password);
+
+                            if(shellStream.ReadLine() == "sh: 0: Can't open stop.sh")
+                            {
+                                throw new Exception("Can't open stop.sh");
+                            }
                             while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
                             {
                                 Console.WriteLine(line);
