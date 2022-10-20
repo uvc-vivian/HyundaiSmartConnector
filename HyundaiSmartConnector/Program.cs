@@ -63,11 +63,12 @@ namespace SshNet
                     {
                         throw new Exception("Can't open run.sh");
                     }
-
+                    /*
                     while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
                     {
                         Console.WriteLine(line);
                     }
+                    */
 
                     Console.WriteLine($"{name} SmartConnector Started. Press Z to exit...");
 
