@@ -78,10 +78,10 @@ namespace SshNet
                             {
                                 shellStream.WriteLine($"cd {path}");
                                 output = shellStream.Expect(new Regex(@"[$>]"));
-                                shellStream.WriteLine("sudo sh stop.sh");
-                                Thread.Sleep(1000);
-                                output = shellStream.Expect(new Regex(@"([$#>:])"));
-                                shellStream.WriteLine(password);
+                                shellStream.WriteLine("sh stop.sh");
+                                //Thread.Sleep(1000);
+                                //output = shellStream.Expect(new Regex(@"([$#>:])"));
+                                //shellStream.WriteLine(password);
 
                                 if(shellStream.ReadLine() == "sh: 0: Can't open stop.sh")
                                 {
