@@ -78,12 +78,12 @@ namespace SshNet
                             ConsoleKeyInfo key = Console.ReadKey();
                             if (key.Key == ConsoleKey.Z)
                             {
-                                //shellStream.WriteLine($"cd {path}");
+                                shellStream.WriteLine($"cd {path}");
                                 output = shellStream.Expect(new Regex(@"[$>]"));
-                                //shellStream.WriteLine("sudo su");
-                                //Thread.Sleep(500);
-                                //output = shellStream.Expect(new Regex(@"([$#>:])"));
-                                //shellStream.WriteLine(password);
+                                shellStream.WriteLine("sudo su");
+                                Thread.Sleep(500);
+                                output = shellStream.Expect(new Regex(@"([$#>:])"));
+                                shellStream.WriteLine(password);
                                 Thread.Sleep(500);
                                 shellStream.WriteLine("sh stop.sh");
                                 //Thread.Sleep(500);
