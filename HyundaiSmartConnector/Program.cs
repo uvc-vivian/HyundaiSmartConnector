@@ -47,6 +47,7 @@ namespace SshNet
                 var output = shellStream.Expect(new Regex(@"[$>]"));
                 shellStream.WriteLine($"cd {path}");
                 shellStream.WriteLine("sudo sh run.sh");
+                Thread.Sleep(1000);
                 output = shellStream.Expect(new Regex(@"([$#>:])"));
                 shellStream.WriteLine(password);
 
@@ -68,6 +69,7 @@ namespace SshNet
                             shellStream.WriteLine($"cd {path}");
                             output = shellStream.Expect(new Regex(@"[$>]"));
                             shellStream.WriteLine("sudo sh stop.sh");
+                            Thread.Sleep(1000);
                             output = shellStream.Expect(new Regex(@"([$#>:])"));
                             shellStream.WriteLine(password);
                             while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
