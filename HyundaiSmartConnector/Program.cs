@@ -49,10 +49,11 @@ namespace SshNet
                     var output = shellStream.Expect(new Regex(@"[$>]"));
                     shellStream.WriteLine($"cd {path}");
                     output = shellStream.Expect(new Regex(@"[$>]"));
-                    shellStream.WriteLine("sudo sh run.sh");
-                    Thread.Sleep(1000);
+                    shellStream.WriteLine("sudo su");
+                    Thread.Sleep(500);
                     output = shellStream.Expect(new Regex(@"([$#>:])"));
                     shellStream.WriteLine(password);
+                    shellStream.WriteLine("sh run.sh");
 
                     string line;
                 
