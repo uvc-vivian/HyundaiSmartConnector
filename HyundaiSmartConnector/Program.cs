@@ -76,7 +76,8 @@ namespace SshNet
                             ConsoleKeyInfo key = Console.ReadKey();
                             if (key.Key == ConsoleKey.Z)
                             {
-                                output = shellStream.Expect(new Regex(@"[$>]"));
+                                //shellStream.WriteLine($"cd {path}");
+                                //output = shellStream.Expect(new Regex(@"[$>]"));
                                 shellStream.WriteLine("sudo sh stop.sh");
                                 Thread.Sleep(500);
                                 output = shellStream.Expect(new Regex(@"([$#>:])"));
@@ -134,7 +135,7 @@ namespace SshNet
                 int edgePort = Int32.Parse(config["edgePort"]);
                 string userName = config["userName"];
                 string userPw = config["userPw"]; 
-                string smartConnectorPath = $"/home/${userName}/SmartConnector";
+                string smartConnectorPath = $"/home/{userName}/SmartConnector";
 
                 RunSmartConnector(robotName, edgeAddress, edgePort, userName, userPw, smartConnectorPath);
             }
