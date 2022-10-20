@@ -48,11 +48,13 @@ namespace SshNet
                     ShellStream shellStream = client.CreateShellStream("xterm", 80, 24, 800, 600, 1024, termkvp);
                     var output = shellStream.Expect(new Regex(@"[$>]"));
                     shellStream.WriteLine($"cd {path}");
+                    Thread.Sleep(500);
                     output = shellStream.Expect(new Regex(@"[$>]"));
                     shellStream.WriteLine("sudo su");
                     Thread.Sleep(500);
                     output = shellStream.Expect(new Regex(@"([$#>:])"));
                     shellStream.WriteLine(password);
+                    Thread.Sleep(500);
                     shellStream.WriteLine("sh run.sh");
 
                     string line;
@@ -77,11 +79,14 @@ namespace SshNet
                             if (key.Key == ConsoleKey.Z)
                             {
                                 //shellStream.WriteLine($"cd {path}");
-                                //output = shellStream.Expect(new Regex(@"[$>]"));
-                                shellStream.WriteLine("sudo sh stop.sh");
+                                output = shellStream.Expect(new Regex(@"[$>]"));
+                                shellStream.WriteLine("sudo su");
                                 Thread.Sleep(500);
                                 output = shellStream.Expect(new Regex(@"([$#>:])"));
                                 shellStream.WriteLine(password);
+                                Thread.Sleep(500);
+                                shellStream.WriteLine("sh stop.sh");
+                                Thread.Sleep(500);
 
                                 if(shellStream.ReadLine() == "sh: 0: Can't open stop.sh")
                                 {
