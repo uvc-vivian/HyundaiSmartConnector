@@ -1,0 +1,5 @@
+robotName=DOOSAN
+edgeAddress=10.20.193.62
+edgePort=4052
+userName=advantech
+userPw=opcua5497
