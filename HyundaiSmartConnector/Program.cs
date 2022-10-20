@@ -34,64 +34,69 @@ namespace SshNet
             try
             {
                 //create new client & session
-                SshClient client = new SshClient(address, port, user, password);
-                client.Connect();
+                using(SshClient client = new SshClient(address, port, user, password))
+                {
+                    client.ErrorOccurred += (sender, ex) => Console.WriteLine(ex.Exception);
+                    client.Connect();
 
-                //create terminal -> used by ShellStream
-                //create a dictionary of terminal modes & add terminal mode
-                IDictionary<TerminalModes, uint> termkvp = new Dictionary<TerminalModes, uint>();
-                termkvp.Add(TerminalModes.ECHO, 53);
+                    //create terminal -> used by ShellStream
+                    //create a dictionary of terminal modes & add terminal mode
+                    IDictionary<TerminalModes, uint> termkvp = new Dictionary<TerminalModes, uint>();
+                    termkvp.Add(TerminalModes.ECHO, 53);
 
-                //execute start.sh script
-                ShellStream shellStream = client.CreateShellStream("xterm", 80, 24, 800, 600, 1024, termkvp);
-                var output = shellStream.Expect(new Regex(@"[$>]"));
-                shellStream.WriteLine($"cd {path}");
-                shellStream.WriteLine("sudo sh run.sh");
-                Thread.Sleep(1000);
-                output = shellStream.Expect(new Regex(@"([$#>:])"));
-                shellStream.WriteLine(password);
+                    //execute start.sh script
+                    ShellStream shellStream = client.CreateShellStream("xterm", 80, 24, 800, 600, 1024, termkvp);
+                    var output = shellStream.Expect(new Regex(@"[$>]"));
+                    shellStream.WriteLine($"cd {path}");
+                    output = shellStream.Expect(new Regex(@"[$>]"));
+                    shellStream.WriteLine("sudo sh run.sh");
+                    Thread.Sleep(1000);
+                    output = shellStream.Expect(new Regex(@"([$#>:])"));
+                    shellStream.WriteLine(password);
 
-                string line;
+                    string line;
                 
-                if ((line = shellStream.ReadLine()) == "sh: 0: Can't open run.sh")
-                {
-                    throw new Exception("Can't open run.sh");
-                }
-
-                while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
-                {
-                    Console.WriteLine(line);
-                }
-
-                Console.WriteLine($"{name} SmartConnector Started. Press Z to exit...");
-
-                while (true)
-                {
-                    if (Console.KeyAvailable)
+                    if ((line = shellStream.ReadLine()) == "sh: 0: Can't open run.sh")
                     {
-                        ConsoleKeyInfo key = Console.ReadKey();
-                        if (key.Key == ConsoleKey.Z)
-                        {
-                            shellStream.WriteLine($"cd {path}");
-                            output = shellStream.Expect(new Regex(@"[$>]"));
-                            shellStream.WriteLine("sudo sh stop.sh");
-                            Thread.Sleep(1000);
-                            output = shellStream.Expect(new Regex(@"([$#>:])"));
-                            shellStream.WriteLine(password);
+                        throw new Exception("Can't open run.sh");
+                    }
 
-                            if(shellStream.ReadLine() == "sh: 0: Can't open stop.sh")
+                    while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
+                    {
+                        Console.WriteLine(line);
+                    }
+
+                    Console.WriteLine($"{name} SmartConnector Started. Press Z to exit...");
+
+                    while (true)
+                    {
+                        if (Console.KeyAvailable)
+                        {
+                            ConsoleKeyInfo key = Console.ReadKey();
+                            if (key.Key == ConsoleKey.Z)
                             {
-                                throw new Exception("Can't open stop.sh");
+                                shellStream.WriteLine($"cd {path}");
+                                output = shellStream.Expect(new Regex(@"[$>]"));
+                                shellStream.WriteLine("sudo sh stop.sh");
+                                Thread.Sleep(1000);
+                                output = shellStream.Expect(new Regex(@"([$#>:])"));
+                                shellStream.WriteLine(password);
+
+                                if(shellStream.ReadLine() == "sh: 0: Can't open stop.sh")
+                                {
+                                    throw new Exception("Can't open stop.sh");
+                                }
+                                while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
+                                {
+                                    Console.WriteLine(line);
+                                }
+                                Console.WriteLine($"\r\n--- {name} SmartConnector Stopped ---");
+                                client.Disconnect();
                             }
-                            while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
-                            {
-                                Console.WriteLine(line);
-                            }
-                            Console.WriteLine($"\r\n--- {name} SmartConnector Stopped ---");
-                            client.Disconnect();
                         }
                     }
                 }
+                
             }
             catch (Exception ex)
             {
@@ -132,7 +137,6 @@ namespace SshNet
                 string smartConnectorPath = $"/home/${userName}/SmartConnector";
 
                 RunSmartConnector(robotName, edgeAddress, edgePort, userName, userPw, smartConnectorPath);
-
             }
             catch(Exception ex)
             {
