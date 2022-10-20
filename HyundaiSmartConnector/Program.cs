@@ -88,7 +88,7 @@ namespace SshNet
                                 shellStream.WriteLine("sh stop.sh");
                                 Thread.Sleep(500);
 
-                                if(shellStream.ReadLine() == "sh: 0: Can't open stop.sh")
+                                if((line = shellStream.ReadLine()) == "sh: 0: Can't open stop.sh")
                                 {
                                     Console.WriteLine("T-T");
                                     //throw new Exception("Can't open stop.sh");
