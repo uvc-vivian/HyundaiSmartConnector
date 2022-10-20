@@ -76,12 +76,11 @@ namespace SshNet
                             ConsoleKeyInfo key = Console.ReadKey();
                             if (key.Key == ConsoleKey.Z)
                             {
-                                shellStream.WriteLine($"cd {path}");
                                 output = shellStream.Expect(new Regex(@"[$>]"));
-                                shellStream.WriteLine("sh stop.sh");
-                                //Thread.Sleep(1000);
-                                //output = shellStream.Expect(new Regex(@"([$#>:])"));
-                                //shellStream.WriteLine(password);
+                                shellStream.WriteLine("sudo sh stop.sh");
+                                Thread.Sleep(500);
+                                output = shellStream.Expect(new Regex(@"([$#>:])"));
+                                shellStream.WriteLine(password);
 
                                 if(shellStream.ReadLine() == "sh: 0: Can't open stop.sh")
                                 {
