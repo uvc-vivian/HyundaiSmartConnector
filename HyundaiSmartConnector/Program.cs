@@ -80,11 +80,45 @@ namespace SshNet
                             {
                                 shellStream.WriteLine($"cd {path}");
                                 output = shellStream.Expect(new Regex(@"[$>]"));
+                                shellStream.WriteLine("sudo sh stop.sh");
+                                Thread.Sleep(1000);
+                                output = shellStream.Expect(new Regex(@"([$#>:])"));
+                                shellStream.WriteLine(password);
+
+                                while ((line = shellStream.ReadLine(TimeSpan.FromSeconds(2))) != null)
+                                {
+                                    Console.WriteLine(line);
+                                }
+
+                                if ((line = shellStream.ReadLine()) == "sh: 0: Can't open stop.sh")
+                                {
+                                    Console.WriteLine("TT-TT");
+                                    throw new Exception("Can't open stop.sh");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Stopped!!!");
+                                }
+
+                                Console.WriteLine($"\r\n--- {name} SmartConnector Stopped ---");
+                                client.Disconnect();
+                            }
+                        }
+                    }
+                    /*
+                    while (true)
+                    {
+                        if (Console.KeyAvailable)
+                        {
+                            ConsoleKeyInfo key = Console.ReadKey();
+                            if (key.Key == ConsoleKey.Z)
+                            {
+                                shellStream.WriteLine($"cd {path}");
+                                output = shellStream.Expect(new Regex(@"[$>]"));
                                 shellStream.WriteLine("sudo su");
                                 Thread.Sleep(500);
                                 output = shellStream.Expect(new Regex(@"([$#>:])"));
                                 shellStream.WriteLine(password);
-                                Thread.Sleep(500);
                                 shellStream.WriteLine("sh stop.sh");
                                 //Thread.Sleep(500);
 
@@ -102,6 +136,7 @@ namespace SshNet
                             }
                         }
                     }
+                    */
                 }
                 
             }
